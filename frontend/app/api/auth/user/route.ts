@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const serviceKey = process.env.SUPABASE_SERVICE_KEY!
+function getEnv() {
+  return {
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    serviceKey: process.env.SUPABASE_SERVICE_KEY!,
+  }
+}
 
 export async function GET(req: NextRequest) {
+  const { supabaseUrl, anonKey, serviceKey } = getEnv()
   try {
     const authHeader = req.headers.get('authorization')
     if (!authHeader?.startsWith('Bearer ')) {
@@ -90,6 +95,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  const { supabaseUrl, anonKey, serviceKey } = getEnv()
   try {
     const authHeader = req.headers.get('authorization')
     if (!authHeader?.startsWith('Bearer ')) {

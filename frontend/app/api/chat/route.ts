@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY || '')
+function getGenAI() {
+  return new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY || '')
+}
 
 export async function POST(req: NextRequest) {
+  const genAI = getGenAI()
   try {
     const { message, role, context } = await req.json()
 
