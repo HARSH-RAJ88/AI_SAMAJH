@@ -17,8 +17,8 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# Lock files (regenerated on install)
-package-lock.json
+# Lock files (keep package-lock.json for Vercel deployment)
+# package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
