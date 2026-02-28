@@ -1,0 +1,49 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# AI Samajh - Auto Pipeline (Scrape & Process Articles)
+# Runs daily at 6:00 AM IST (00:30 UTC) via GitHub Actions
+# Can also be triggered manually from GitHub Actions UI
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: Run AI Pipeline
+
+on:
+  schedule:
+    # Run daily at 6:00 AM IST (00:30 UTC)
+    - cron: '30 0 * * *'
+  workflow_dispatch:
+    # Allow manual trigger from GitHub Actions UI
+    inputs:
+      article_count:
+        description: 'Number of articles to process'
+        required: false
+        default: '5'
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        working-directory: ./agents
+        run: pip install -r requirements.txt
+
+      - name: Create .env file
+        working-directory: ./agents
+        run: |
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
+          echo "SUPABASE_SERVICE_KEY=${{ secrets.SUPABASE_SERVICE_KEY }}" >> .env
+          echo "GOOGLE_AI_API_KEY=${{ secrets.GOOGLE_AI_API_KEY }}" >> .env
+
+      - name: Run pipeline
+        working-directory: ./agents
+        run: |
+          ARTICLE_COUNT=${{ github.event.inputs.article_count || '5' }}
+          python pipeline.py -n $ARTICLE_COUNT
